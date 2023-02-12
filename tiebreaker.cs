@@ -1,6 +1,8 @@
 ﻿using System;
 using System.IO;
 using System.Threading.Tasks;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace TieBreakerApp
 {
@@ -82,8 +84,83 @@ namespace TieBreakerApp
 		public static void FindWinner(string inputFile)
 		{
 			string playerName = "";
-			int maxScore = 0;
+			int playerScore = 0;
+			List<Player> players = new List<Player>();
+			foreach (var player in File.ReadLines(inputFile))
+			{
+				var playerAndCards = player.Trim().Split(':');
+                playerName = playerAndCards[0];
+                playerScore = SumPlayerScore(playerAndCards[1]);
+				players.Add(new Player
+				{
+                    Name = playerName, 
+					Score = playerScore
+                });
+            }
 
+			//sort players by score
+			players.OrderBy(p => p.Score);
+			foreach (var item in players)
+			{
+				//Console.WriteLine(item.Score);
+			}
         }
-	} 
+
+		public static int SumPlayerScore(string cards)
+		{
+			var totalScore = 0;
+			var scores = new List<int>();
+			foreach (var card in cards.Trim().Split(','))
+			{
+				var faceValue = card.Substring(0, card.Length - 1);
+				var suit = card[card.Length - 1];
+				var parsedInt = 0;
+				//Add value to list of scores
+				scores.Add(int.TryParse(faceValue, out parsedInt) ? parsedInt : GetFaceValue(faceValue));
+			}
+
+            //sort player cards
+            scores.Sort();
+			scores.Reverse();
+
+            //sum top 3 cards
+            totalScore = scores.Sum();
+			Console.WriteLine(totalScore);
+            return score;
+		}
+
+		public static int GetFaceValue(string faceValueString)
+		{
+            //handle "input is not case-sensitive"
+            var input = faceValueString.ToUpper();
+
+			var value = 0;
+			switch (input)
+			{
+				case "J":
+					value = 11;
+					break;
+				case "Q":
+					value = 12;
+					break;
+				case "K":
+					value = 13;
+					break;
+				case "A":
+					value = 11;
+					break;
+				default:
+					value = 0;
+					break;
+			}
+			return value;
+		}
+
+    }
+
+	public class Player
+	{
+		public string Name { get; set; }
+		public int Score { get; set; }
+	}
 }
