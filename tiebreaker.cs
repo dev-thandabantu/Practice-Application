@@ -11,21 +11,20 @@ namespace TieBreakerApp
 	/// </summary>
 	public class TieBreaker
 	{
-
+		public static string outputFileName { get; set; }
 		//single winner variables
-        public static bool win = false;
-        public static string winnerName = "Player1";
-        public static string winnerScore = "35";
+        public static bool win { get; set; }
+        public static string winnerName { get; set; }
+        public static int winnerScore { get; set; }
 		//tie variables
-        public static bool tie = false;
-        public static string winner1Name = "Player2";
-        public static string winner2Name = "Player3";
-        public static int score = 45;
+        public static bool tie { get; set; }
+        public static string winner1Name { get; set; }
+        public static string winner2Name { get; set; }
+        public static int score { get; set; }
 
         public static void Main(string[] args)
 		{
 			string fileName = "";
-			string outputFileName = "";
 
 			//get names for input and output files
 			for (int i = 0; i < args.Length; i++)
@@ -98,11 +97,26 @@ namespace TieBreakerApp
                 });
             }
 
-			//sort players by score
-			players.OrderBy(p => p.Score);
+			//sort players by score in desc order
+			players = players.OrderByDescending(p => p.Score).ToList();
 			foreach (var item in players)
 			{
-				//Console.WriteLine(item.Score);
+				Console.WriteLine(item.Name + "=>" + item.Score);
+			}
+			var maxScore = players.Max(p => p.Score);
+			tie = players.Where(p => p.Score == maxScore).Count() > 1;
+			if (tie)
+			{
+				winner1Name = players[0].Name;
+				winner2Name = players[1].Name;
+				score = maxScore;
+                File.WriteAllText(outputFileName, winner1Name + "," + winner2Name + ":" + score);
+			}
+			else
+			{
+				winnerName = players[0].Name;
+				winnerScore = maxScore;
+                File.WriteAllText(outputFileName, winnerName + ":" + winnerScore);
 			}
         }
 
@@ -115,8 +129,8 @@ namespace TieBreakerApp
 				var faceValue = card.Substring(0, card.Length - 1);
 				var suit = card[card.Length - 1];
 				var parsedInt = 0;
-				//Add value to list of scores
-				scores.Add(int.TryParse(faceValue, out parsedInt) ? parsedInt : GetFaceValue(faceValue));
+				//Add value to list of scores--*
+				scores.Add(int.TryParse(faceValue, out parsedInt) ? int.Parse(faceValue) : GetFaceValue(faceValue));
 			}
 
             //sort player cards
@@ -124,9 +138,8 @@ namespace TieBreakerApp
 			scores.Reverse();
 
             //sum top 3 cards
-            totalScore = scores.Sum();
-			Console.WriteLine(totalScore);
-            return score;
+            totalScore = scores.Take(3).Sum();
+            return totalScore;
 		}
 
 		public static int GetFaceValue(string faceValueString)
