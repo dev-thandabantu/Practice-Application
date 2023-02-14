@@ -12,15 +12,14 @@ namespace TieBreakerApp
 	public class TieBreaker
 	{
 		public static string outputFileName { get; set; }
-		//single winner variables
+        public static int winnerScore { get; set; }
+        //single winner variables
         public static bool win { get; set; }
         public static string winnerName { get; set; }
-        public static int winnerScore { get; set; }
 		//tie variables
         public static bool tie { get; set; }
         public static string winner1Name { get; set; }
         public static string winner2Name { get; set; }
-        public static int score { get; set; }
 
         public static void Main(string[] args)
 		{
@@ -66,18 +65,6 @@ namespace TieBreakerApp
 
 			//find the winner
             FindWinner(fileName);
-
-			//write winner(s)
-            if (win)
-			{
-                File.WriteAllText(outputFileName, winnerName + ":" + winnerScore);
-				return;
-			}
-			else if (tie)
-			{
-                File.WriteAllText(outputFileName, winner1Name + "," + winner2Name + ":" + score);
-				return;
-			}
 		}
 
 		public static void FindWinner(string inputFile)
@@ -99,25 +86,25 @@ namespace TieBreakerApp
 
 			//sort players by score in desc order
 			players = players.OrderByDescending(p => p.Score).ToList();
-			foreach (var item in players)
-			{
-				Console.WriteLine(item.Name + "=>" + item.Score);
-			}
-			var maxScore = players.Max(p => p.Score);
-			tie = players.Where(p => p.Score == maxScore).Count() > 1;
+			
+			winnerScore = players.Max(p => p.Score);
+			tie = players.Where(p => p.Score == winnerScore).Count() == 2;
+			win = players.Where(p => p.Score == winnerScore).Count() == 1;
 			if (tie)
 			{
 				winner1Name = players[0].Name;
 				winner2Name = players[1].Name;
-				score = maxScore;
-                File.WriteAllText(outputFileName, winner1Name + "," + winner2Name + ":" + score);
+                File.WriteAllText(outputFileName, winner1Name + "," + winner2Name + ":" + winnerScore);
+			}
+			else if (win)
+			{
+				winnerName = players[0].Name;
+                File.WriteAllText(outputFileName, winnerName + ":" + winnerScore);
 			}
 			else
 			{
-				winnerName = players[0].Name;
-				winnerScore = maxScore;
-                File.WriteAllText(outputFileName, winnerName + ":" + winnerScore);
-			}
+                File.WriteAllText(outputFileName, "More than two winners: Unhandled");
+            }
         }
 
 		public static int SumPlayerScore(string cards)
