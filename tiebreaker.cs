@@ -104,7 +104,7 @@ namespace TieBreakerApp
 			}
 			else
 			{
-                File.WriteAllText(outputFileName, "More than two winners: Unhandled");
+                File.WriteAllText(outputFileName, "Exception:More than two winners.");
             }
         }
 
