@@ -39,27 +39,27 @@ namespace TieBreakerApp
 			}
 
 			//some guard clauses
-			if (fileName == "")
+			if (String.IsNullOrEmpty(fileName))
 			{
 				outputFileName = outputFileName != "" ? outputFileName : "output.txt";
-				File.WriteAllText(outputFileName, "No input file specified");
+				File.WriteAllText(outputFileName, "Exception:No input file specified");
 				return;
 			}
-			if (outputFileName == "")
+			if (String.IsNullOrEmpty(outputFileName))
 			{
-				File.WriteAllText("output.txt", "No output file specified");
+				File.WriteAllText("output.txt", "Exception:No output file specified");
 				return;
 			}
 			if (!File.Exists(fileName))
 			{
-				File.WriteAllText(outputFileName, "The input file does not exist.");
+				File.WriteAllText(outputFileName, "Exception:The input file does not exist.");
 				return;
 			}
             bool validInput = true;
-			//validInput = ValidateInput(fileName);
+			validInput = ValidateInput(fileName);
             if (!validInput)
             {
-                File.WriteAllText(outputFileName, "Exception:Some reason why the input is wrong.");
+                File.WriteAllText(outputFileName, "Exception:Invalid file contents.");
                 return;
             }
 
@@ -94,6 +94,7 @@ namespace TieBreakerApp
 			{
 				winner1Name = players[0].Name;
 				winner2Name = players[1].Name;
+                //TODO: winnerScore = CalculateFaceSuitValue(inputFile);
                 File.WriteAllText(outputFileName, winner1Name + "," + winner2Name + ":" + winnerScore);
 			}
 			else if (win)
@@ -156,6 +157,13 @@ namespace TieBreakerApp
 			return value;
 		}
 
+		public static bool ValidateInput(string fileName)
+		{
+			//TODO: Validate the contents of the input file
+			//"tie may not be broken"
+
+			return true;
+		}
     }
 
 	public class Player
