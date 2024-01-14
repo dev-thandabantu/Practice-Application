@@ -1,5 +1,4 @@
-# Derivco-Application
-Technical assessment for Derivco
+# Practice-Application
 
 Programming Task
 We've created a simple multiplayer card game where:
@@ -13,7 +12,7 @@ Each card is given a score based on its suit, with clubs = 1, diamonds = 2, hear
 = 4, and the player's score is the suit value of the player’s highest card.
 o
 •
-You are required to write a command line application using C# or JavaScript (Node application) that needs to do
+You are required to write a command line application using C# that needs to do
 the following:
 • Run on Windows.
 • Be invoked with the name of the input and output text files.
